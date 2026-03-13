@@ -1,0 +1,141 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║              🚀 HOLOVIEW - QUICK START GUIDE 🚀               ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────┐
+│  STEP 1: CHOOSE YOUR VERSION                                   │
+└────────────────────────────────────────────────────────────────┘
+
+   🖥️  DESKTOP APP (Recommended)
+      → Double-click: START_HERE.bat
+      → Select option 1 to test, or 2 to build .exe
+
+   🌐 WEB VERSION
+      → Double-click: START_HERE.bat  
+      → Select option 3
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  STEP 2: FIRST TIME SETUP                                      │
+└────────────────────────────────────────────────────────────────┘
+
+   Desktop Version:
+   ✓ Requires Python 3.8+
+   ✓ Auto-installs dependencies when you run START_HERE.bat
+   
+   Building .exe:
+   ✓ Run START_HERE.bat → Option 2
+   ✓ Wait 2-3 minutes for build
+   ✓ Find HoloView.exe in dist\ folder
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  CONTROLS (Desktop & Web)                                      │
+└────────────────────────────────────────────────────────────────┘
+
+   🎮 KEYBOARD SHORTCUTS:
+   
+      H      = Holo Mode (turn model blue)
+      W      = Wireframe (toggle wireframe view)
+      R      = Reset view
+      A      = Auto-rotate
+      L      = Load model
+      ESC    = Exit / Close model list
+
+   🖱️  MOUSE CONTROLS:
+   
+      Left Drag     = Rotate model
+      Right Drag    = Pan camera
+      Scroll        = Zoom in/out
+
+   🎙️  VOICE COMMANDS:
+   
+      Click "Voice Control" button, then say:
+      - "Holo mode"
+      - "Wireframe"  
+      - "Auto rotate"
+      - "Reset"
+      - "Load [model name]"
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  FEATURES                                                      │
+└────────────────────────────────────────────────────────────────┘
+
+   ✨ Holo Mode    - Blue metallic appearance
+   📐 Wireframe    - See the model structure
+   🔄 Auto-Rotate  - Automatic 360° rotation
+   🎤 Voice Control - Hands-free operation
+   📁 Multi-Model  - Load any .obj model
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  ADDING YOUR OWN 3D MODELS                                     │
+└────────────────────────────────────────────────────────────────┘
+
+   1. Create a folder in "3D Models\" directory
+   2. Name it whatever you want (e.g., "My Model")
+   3. Put your .obj file inside
+   4. (Optional) Add .mtl and texture files
+   5. Click "Load" in HoloView to see it!
+
+   Supported: .obj files with optional .mtl and textures
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  FILES YOU NEED                                                │
+└────────────────────────────────────────────────────────────────┘
+
+   Essential Files:
+   ✓ START_HERE.bat       ← Start from here!
+   ✓ desktop_app.py       ← Desktop version
+   ✓ backend.py           ← Web server
+   ✓ app.js               ← Main application
+   ✓ index.html           ← User interface
+   ✓ 3D Models\           ← Your models folder
+
+   Build Files:
+   ✓ build_desktop.bat    ← Build .exe
+   ✓ HoloView.spec        ← Build configuration
+
+   Documentation:
+   ✓ QUICK_START.txt      ← This file
+   ✓ SETUP_GUIDE.txt      ← Detailed setup
+   ✓ README_DESKTOP.md    ← Full documentation
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  TROUBLESHOOTING                                               │
+└────────────────────────────────────────────────────────────────┘
+
+   ❌ "Python not found"
+      → Install Python from python.org
+      → Check "Add to PATH" during installation
+
+   ❌ Models not showing
+      → Check "3D Models" folder exists
+      → Verify .obj files are inside model folders
+
+   ❌ Voice control not working  
+      → Normal - requires SpeechToText.py module
+      → Works fine without it using keyboard/mouse
+
+   ❌ .exe won't start
+      → Run as Administrator
+      → Add Windows Defender exception
+      → Keep "3D Models" folder with .exe
+
+
+┌────────────────────────────────────────────────────────────────┐
+│  NEED MORE HELP?                                               │
+└────────────────────────────────────────────────────────────────┘
+
+   📖 Read: SETUP_GUIDE.txt (detailed instructions)
+   📖 Read: README_DESKTOP.md (full documentation)
+
+
+╔════════════════════════════════════════════════════════════════╗
+║                     HAPPY VIEWING! ✨                         ║
+╚════════════════════════════════════════════════════════════════╝

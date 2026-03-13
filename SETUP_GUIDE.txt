@@ -1,0 +1,135 @@
+================================================================================
+                    HOLOVIEW DESKTOP APPLICATION
+                         Setup & Build Guide
+================================================================================
+
+📋 TABLE OF CONTENTS
+   1. Testing the Desktop App
+   2. Building the .exe File
+   3. Running the Application
+   4. Troubleshooting
+
+================================================================================
+1️⃣  TESTING THE DESKTOP APP (Before Building .exe)
+================================================================================
+
+Step 1: Open Command Prompt or PowerShell in this folder
+   - Right-click in the folder → "Open in Terminal" (Windows 11)
+   - OR: Shift + Right-click → "Open PowerShell window here"
+
+Step 2: Install required packages
+   pip install -r requirements_desktop.txt
+
+Step 3: Test run the desktop app
+   python desktop_app.py
+
+   OR simply double-click: run_desktop.bat
+
+✅ The app should open in fullscreen. Press ESC to exit.
+
+================================================================================
+2️⃣  BUILDING THE .EXE FILE
+================================================================================
+
+📦 OPTION A: Automatic Build (Recommended)
+   
+   Simply double-click: build_desktop.bat
+   
+   This will:
+   - Install dependencies
+   - Build HoloView.exe
+   - Place it in the dist\ folder
+
+📦 OPTION B: Manual Build
+
+   Step 1: Install dependencies
+      pip install -r requirements_desktop.txt
+
+   Step 2: Build the executable
+      pyinstaller --clean HoloView.spec
+
+   Step 3: Find your .exe
+      dist\HoloView.exe
+
+⏱️  Build time: 1-3 minutes (depending on your system)
+📦  Final size: ~50-100 MB (includes Python + all dependencies)
+
+================================================================================
+3️⃣  RUNNING THE APPLICATION
+================================================================================
+
+After building:
+
+1. Navigate to: dist\HoloView.exe
+2. Double-click to launch
+3. The app opens in fullscreen automatically
+
+🎮 CONTROLS:
+   H  = Toggle Holo Mode (blue color)
+   W  = Toggle Wireframe
+   R  = Reset View
+   A  = Auto Rotate
+   L  = Load Model
+   ESC = Exit fullscreen/Close app
+
+📁 IMPORTANT: Keep "3D Models" folder with the .exe!
+   The exe needs the models folder to function.
+
+================================================================================
+4️⃣  TROUBLESHOOTING
+================================================================================
+
+❌ Problem: "pip is not recognized"
+✅ Solution: Install Python from python.org (add to PATH during install)
+
+❌ Problem: "Module not found" errors
+✅ Solution: pip install --upgrade -r requirements_desktop.txt
+
+❌ Problem: Build creates huge .exe file
+✅ Solution: This is normal. The exe includes Python runtime (~50-100MB)
+
+❌ Problem: Windows Defender blocks the .exe
+✅ Solution: 
+   - Click "More info" → "Run anyway"
+   - OR: Add exception in Windows Defender
+   - This happens with unsigned executables
+
+❌ Problem: .exe won't start / crashes immediately
+✅ Solution:
+   1. Run as Administrator
+   2. Check if "3D Models" folder exists
+   3. Disable antivirus temporarily to test
+   4. Run from command line to see errors: HoloView.exe
+
+❌ Problem: Models not loading in .exe version
+✅ Solution: 
+   - Ensure "3D Models" folder is in same directory as HoloView.exe
+   - Check that .obj and .mtl files exist in model folders
+
+❌ Problem: "pyinstaller: command not found"
+✅ Solution: pip install pyinstaller
+
+================================================================================
+📚 ADDITIONAL INFORMATION
+================================================================================
+
+🔧 Customization:
+   - Edit desktop_app.py to change window settings
+   - Edit HoloView.spec to change build settings
+   - See README_DESKTOP.md for detailed documentation
+
+💾 Distribution:
+   To share with others, provide:
+   1. HoloView.exe (from dist folder)
+   2. 3D Models folder
+   
+   Users just double-click the .exe to run!
+
+🌐 Web Version:
+   To run as web app instead:
+   python backend.py
+   Then open: http://127.0.0.1:8000
+
+================================================================================
+                            ENJOY HOLOVIEW! 🚀
+================================================================================

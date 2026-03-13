@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HoloView - Advanced 3D Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', 'Courier New', monospace;
+        }
+
+        body {
+            overflow: hidden;
+            background: #000000;
+            color: #00d9ff;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        /* HUD Overlay */
+        .hud-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Corner buttons */
+        .control-btn {
+            position: fixed;
+            padding: 15px 25px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            color: #00d9ff;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            pointer-events: all;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.3),
+                inset 0 0 20px rgba(0, 217, 255, 0.1);
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 217, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.8),
+                inset 0 0 30px rgba(0, 217, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn.active {
+            background: rgba(0, 217, 255, 0.5);
+            box-shadow: 0 0 40px rgba(0, 217, 255, 1),
+                inset 0 0 40px rgba(0, 217, 255, 0.5);
+        }
+
+        #reset-btn {
+            top: 20px;
+            left: 20px;
+        }
+
+        #exit-btn {
+            top: 20px;
+            right: 20px;
+        }
+
+        #rotate-btn {
+            top: 100px;
+            left: 20px;
+        }
+
+        #holo-btn {
+            top: 100px;
+            right: 20px;
+        }
+
+        #load-btn {
+            top: 180px;
+            left: 20px;
+        }
+
+        #wireframe-btn {
+            top: 260px;
+            left: 20px;
+        }
+
+        #stt-btn {
+            top: 180px;
+            right: 20px;
+        }
+
+        #harm-btn {
+            top: 260px;
+            right: 20px;
+            border-color: #ff3300;
+            color: #ff3300;
+            box-shadow: 0 0 20px rgba(255, 51, 0, 0.3),
+                inset 0 0 20px rgba(255, 51, 0, 0.1);
+        }
+
+        #harm-btn:hover {
+            background: rgba(255, 51, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 51, 0, 0.8),
+                inset 0 0 30px rgba(255, 51, 0, 0.3);
+        }
+
+        #harm-btn.active {
+            background: rgba(255, 51, 0, 0.5);
+            box-shadow: 0 0 40px rgba(255, 51, 0, 1),
+                inset 0 0 40px rgba(255, 51, 0, 0.5);
+        }
+
+        /* Model List Panel */
+        #model-list {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            max-height: 70vh;
+            background: rgba(0, 0, 0, 0.95);
+            border: 3px solid #00d9ff;
+            padding: 30px;
+            display: none;
+            pointer-events: all;
+            overflow-y: auto;
+            z-index: 2000;
+            box-shadow: 0 0 50px rgba(0, 217, 255, 0.8),
+                inset 0 0 50px rgba(0, 217, 255, 0.1);
+        }
+
+        #model-list.active {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        #model-list h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+        }
+
+        .model-item {
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .model-item:hover {
+            background: rgba(0, 217, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.6);
+            transform: translateX(10px);
+        }
+
+        #close-list {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid #ff0000;
+            color: #ff0000;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #close-list:hover {
+            background: rgba(255, 0, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        }
+
+        /* Loading indicator */
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            display: none;
+        }
+
+        #loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 100px;
+            height: 100px;
+            border: 4px solid rgba(0, 217, 255, 0.2);
+            border-top: 4px solid #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.6);
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #loading-text {
+            font-size: 20px;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.8);
+            letter-spacing: 2px;
+        }
+
+        /* Status Display */
+        #status {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 2px solid #00d9ff;
+            font-size: 14px;
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+        /* Scanline effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                    transparent 0%,
+                    rgba(0, 217, 255, 0.02) 50%,
+                    transparent 100%);
+            background-size: 100% 4px;
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        @keyframes scanline {
+            0% {
+                background-position: 0 0;
+            }
+
+            100% {
+                background-position: 0 100vh;
+            }
+        }
+
+        /* Corner decorations */
+        .corner {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border: 2px solid #00d9ff;
+            pointer-events: none;
+            box-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+        }
+
+        .corner-tl {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-tr {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-bl {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-br {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Scrollbar styling */
+        #model-list::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #model-list::-webkit-scrollbar-track {
+            background: rgba(0, 217, 255, 0.1);
+        }
+
+        #model-list::-webkit-scrollbar-thumb {
+            background: #00d9ff;
+            box-shadow: 0 0 10px rgba(0, 217, 255, 0.8);
+        }
+
+        /* STT indicator removed (STT is always-on). */
+
+        /* Clap effect overlay */
+        #clap-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.3) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        #clap-effect.active {
+            opacity: 1;
+        }
+
+        /* Repulsor charging glow */
+        .repulsor-glow {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.8) 0%, rgba(0, 217, 255, 0.4) 40%, transparent 70%);
+            pointer-events: none;
+            z-index: 999;
+            animation: repulsorPulse 0.5s ease-in-out infinite;
+            box-shadow: 0 0 60px rgba(0, 217, 255, 1), 0 0 100px rgba(0, 217, 255, 0.6);
+        }
+
+        @keyframes repulsorPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* Unibeam charging glow (larger, white-blue) */
+        .unibeam-glow {
+            position: fixed;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, rgba(0, 217, 255, 0.6) 30%, transparent 70%);
+            pointer-events: none;
+            z-index: 999;
+            animation: unibeamPulse 0.3s ease-in-out infinite;
+            box-shadow: 0 0 100px rgba(255, 255, 255, 1), 0 0 150px rgba(0, 217, 255, 0.8);
+        }
+
+        @keyframes unibeamPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 1;
+            }
+        }
+
+        /* Particle canvas */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        /* Screen shake */
+        @keyframes screenShake {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            10% {
+                transform: translate(-10px, -10px);
+            }
+
+            20% {
+                transform: translate(10px, 10px);
+            }
+
+            30% {
+                transform: translate(-10px, 10px);
+            }
+
+            40% {
+                transform: translate(10px, -10px);
+            }
+
+            50% {
+                transform: translate(-10px, -10px);
+            }
+
+            60% {
+                transform: translate(10px, 10px);
+            }
+
+            70% {
+                transform: translate(-10px, 10px);
+            }
+
+            80% {
+                transform: translate(10px, -10px);
+            }
+
+            90% {
+                transform: translate(-5px, 5px);
+            }
+        }
+
+        .shake {
+            animation: screenShake 0.5s ease-in-out;
+        }
+
+        /* Google Font */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    </style>
+</head>
+
+<body>
+    <!-- Canvas container -->
+    <div id="canvas-container"></div>
+
+    <!-- Voice commands cheat-sheet -->
+    <div id="voice-cheatsheet"
+        style="position:fixed;bottom:80px;right:20px;background:rgba(0,0,0,0.9);border:2px solid #00d9ff;color:#00d9ff;padding:12px 16px;width:260px;font-size:13px;z-index:200;box-shadow:0 0 20px rgba(0,217,255,0.2);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <strong style="font-size:14px;">Voice Commands</strong>
+            <button id="close-cheatsheet"
+                style="background:transparent;border:none;color:#00d9ff;cursor:pointer;font-weight:bold;">✕</button>
+        </div>
+        <div style="line-height:1.4">
+            <div><strong>Reset</strong> — reset view</div>
+            <div><strong>Auto rotate</strong> — start rotating</div>
+            <div><strong>Stop rotation</strong> — stop rotating</div>
+            <div><strong>Holo mode</strong> — toggle hologram</div>
+            <div><strong>Wireframe</strong> — toggle wireframe</div>
+            <div><strong>Load &lt;ModelName&gt;</strong> — load model (say folder name)</div>
+            <div><strong>HARM Mode</strong> — toggle weapon systems</div>
+            <div><strong>Exit</strong> — close app</div>
+        </div>
+    </div>
+
+    <!-- Scanline effect -->
+    <div class="scanline"></div>
+
+    <!-- Corner decorations -->
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <!-- HUD Overlay -->
+    <div class="hud-overlay">
+        <!-- Control buttons -->
+        <button id="reset-btn" class="control-btn">Reset</button>
+        <button id="exit-btn" class="control-btn">Exit</button>
+        <button id="rotate-btn" class="control-btn">Auto Rotate</button>
+        <button id="holo-btn" class="control-btn">Holo Mode</button>
+        <button id="load-btn" class="control-btn">Load</button>
+        <button id="wireframe-btn" class="control-btn">Wireframe</button>
+        <button id="harm-btn" class="control-btn">H.A.R.M.</button>
+
+        <!-- Status display -->
+        <div id="status">Ready</div>
+    </div>
+
+    <!-- Model list panel -->
+    <div id="model-list">
+        <h2>Select Model</h2>
+        <div id="model-items"></div>
+        <button id="close-list">Close</button>
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <div id="loading-text">Loading Model...</div>
+    </div>
+
+    <!-- Clap effect overlay -->
+    <div id="clap-effect"></div>
+
+    <!-- Particle canvas for repulsor effects -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Audio for clap sound -->
+    <audio id="clap-sound" preload="auto">
+        <source src="assets/ironman_clap.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Audio for repulsor sounds -->
+    <audio id="repulsor-charge-sound" preload="auto">
+        <source src="assets/repulsor_charge.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="repulsor-blast-sound" preload="auto">
+        <source src="assets/repulsor_blast.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="unibeam-sound" preload="auto">
+        <source src="assets/unibeam.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/MTLLoader.js"></script>
+
+    <!-- MediaPipe Hands for hand tracking -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <script src="handTracking.js"></script>
+    <script src="app.js"></script>
+    <script>
+        (function () {
+            const sheet = document.getElementById('voice-cheatsheet');
+            const closeBtn = document.getElementById('close-cheatsheet');
+            try {
+                if (localStorage.getItem('hv_cheatsheet_hidden') === '1') {
+                    sheet.style.display = 'none';
+                }
+            } catch (e) { }
+
+            closeBtn.addEventListener('click', () => {
+                sheet.style.display = 'none';
+                try { localStorage.setItem('hv_cheatsheet_hidden', '1'); } catch (e) { }
+            });
+        })();
+    </script>
+</body>
+
+</html>
