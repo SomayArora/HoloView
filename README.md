@@ -1,8 +1,7 @@
-# 🚀 HoloView v2.0 - Ultra-Fast 3D Model Viewer with Hand Tracking
+# 🚀 HoloView - Ultra-Fast 3D Model Viewer with Hand Tracking
 
 An **Iron Man-inspired**, ultra-fast, high-resolution 3D model viewer with advanced **hand tracking** and voice control capabilities. Built with Three.js, MediaPipe Hands, and FastAPI for maximum performance.
 
-![Version](https://img.shields.io/badge/version-2.0-blue)
 ![Python](https://img.shields.io/badge/python-3.8%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -237,6 +236,6 @@ For issues and questions, please create an issue in the project repository.
 
 ---
 
-**Made with ⚡ by HoloView Team**
+**Made with ⚡ by Somay Arora**
 
 *"Sometimes you gotta run before you can walk." - Tony Stark*
